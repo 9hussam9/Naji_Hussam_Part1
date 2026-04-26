@@ -60,3 +60,43 @@ Följande plan gäller för `srv-linux01` och `srv-idm01`:
 | / (root) | 20 GB | xfs | Standardstorlek för operativsystem och applikationer. |
 | /home | 10 GB | xfs | För att separera användardata från systemfiler. |
 | swap | 2 GB | swap | För att hantera minnesallokering vid behov.
+
+# Del 3 — Linux-serverinstallation
+
+### Installation av operativsystem
+Installationen av den första servern, `srv-linux01`, utfördes med Red Hat Enterprise Linux 9. Processen innefattade manuell partitionering, konfiguration av nätverksidentitet och registrering av systemet.
+
+**Konfiguration av filsystem och felsökning:**
+Under installationen uppstod ett tekniskt hinder vid den manuella partitioneringen. Trots att diskstorleken på 35 GiB teoretiskt rymde de krävda 33 GiB, vägrade installeraren att godkänna konfigurationen. 
+
+- **Problem:** "Error checking storage configuration" på grund av saknad boot-struktur för UEFI.
+- **Lösning:** För att lösa detta användes funktionen för automatisk partitionering som utgångspunkt. Detta genererade en nödvändig `/boot/efi`-partition (600 MiB) som krävs för att systemet ska kunna starta. 
+- **Slutgiltig layout:** Efter att basen skapats automatiskt justerades övriga partitioner manuellt för att exakt matcha kraven: 
+    - `/boot`: 1 GiB (xfs)
+    - `/` (root): 20 GiB (xfs)
+    - `/home`: 10 GiB (xfs)
+    - `swap`: 2 GiB
+
+![Filsystemskonfiguration](screenshots/srv-linux01-partitions.png)
+
+*Ovanstående skärmdump visar den slutgiltiga partitioneringen som accepterades av systemet.*
+
+**Efterinstallation och nätverksverifiering:**
+När installationen var klar genomfördes följande steg för att förbereda servern för Björklunda kommuns miljö:
+
+1. **Hostname:** Serverns namn ändrades från standardvärdet till `srv-linux01` med kommandot `hostnamectl set-hostname`.
+2. **Registrering:** Systemet registrerades hos Red Hat för att möjliggöra säkerhetsuppdateringar.
+3. **Signatur:** Ett signaturskript skapades och kördes för att verifiera identitet, hostname och tidsstämpel i dokumentationen.
+
+![IP-konfiguration och signatur](screenshots/srv-linux01-ipconfig.png)
+
+*Bilden verifierar att servern har korrekt hostname (srv-linux01) och en aktiv IP-adress i 192.168-serien, tillsammans med körningen av signaturskriptet.*
+
+# Del 4 — Windows Server och Active Directory
+# Del 5 — Kontohantering med script
+# Del 6 — Delade mappar och rättigheter
+# Del 7 — Utskriftssystem
+# Del 8 — Virtualisering
+# Del 9 — Lagar och säkerhet
+# Del 10 — Råd och stöd
+# Del 11 — Reflektera över din miljö
