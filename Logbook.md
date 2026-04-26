@@ -101,9 +101,7 @@ Efter slutförd installation genomfördes en kontroll av systemet för att säke
 - **ip addr show**: Genom detta kommando bekräftas att nätverkskortet `ens160` har den statiska IP-adressen 192.168.183.135, vilket är nödvändigt för serverns tillgänglighet i nätverket.
 - **hostnamectl**: Detta bekräftar att serverns unika identitet har satts till `srv-linux01` och ger en överblick av systemets kernelversion och arkitektur.
 - **cat /etc/os-release**: Innehållet i denna fil bevisar att servern kör den korrekta versionen av Red Hat Enterprise Linux 9, vilket garanterar en stabil och supportad plattform.
-### Del 3.3 — Verifiera installationen (srv-linux01)
-
-Här verifieras systemets konfiguration genom en serie kommandon. Varje utskrift bekräftar att installationen har utförts enligt kommunens kravspecifikation.
+## Del 3.3.1
 
 #### Skärmdump 3: Blockenheter
 - **lsblk**: Utskriften visar systemets lagringsstruktur i en trädvy och bekräftar att den fysiska hårddisken har delats upp korrekt i de planerade partitionerna för root (/), home (/home) och swap.
@@ -114,6 +112,36 @@ Här verifieras systemets konfiguration genom en serie kommandon. Varje utskrift
 - **df -h**: Utskriften från detta kommando verifierar att filsystemen har monterats på rätt sätt och bekräftar att partitionerna för `/` (20 GiB) och `/home` (10 GiB) har den lagringskapacitet som krävs för kommunens servermiljö.
 
 ![Filsystemsanvändning](screenshots/screenshot-04.png)
+
+#### Del 3.4.1 — Skärmdump #5 (ip addr show)
+- **ip addr show**: Utskriften bekräftar att nätverkskortet `ens160` är korrekt konfigurerat med den statiska IP-adressen 192.168.183.135, vilket gör att servern kan kommunicera på Björklunda kommuns nätverk.
+
+![Nätverksadress](screenshots/screenshot-05.png)
+
+#### Del 3.4.2 — Skärmdump #6 (hostnamectl)
+- **hostnamectl**: Detta resultat verifierar att serverns hostname är `srv-linux01` och visar att vi kör en Red Hat Enterprise Linux-plattform med en specifik kernel-version som stödjer kommunens krav på stabilitet.
+
+![Systemidentitet](screenshots/screenshot-06.png)
+
+
+#### Del 3.4.3 — Svara på frågor:
+
+1. Tre utvalda tjänster från listan:
+
+auditd.service (Kernel Audit System): Denna tjänst ansvarar för att logga säkerhetsrelaterade händelser i systemet. Den är absolut nödvändig för Björklunda kommun eftersom den skapar en spårbar logg över vem som gjort vad, vilket krävs för säkerhetsgranskning.
+
+chronyd.service: Denna tjänst synkroniserar systemets klocka mot nätverket (NTP). På en server är detta kritiskt för att alla loggfiler ska ha exakta tidsstämplar och för att tidsbaserade säkerhetsprotokoll ska fungera utan fel.
+
+sshd.service (OpenSSH server daemon): Tjänsten som tillåter säkra fjärranslutningar. Den behövs för att vi som tekniker ska kunna administrera servern på distans via en krypterad tunnel istället för att behöva sitta fysiskt vid maskinen i serverhallen.
+
+2. Vilken port lyssnar SSH på och vad används den till?
+SSH lyssnar som standard på port 22. Den används för att skapa en krypterad kommunikationskanal mellan en klient och servern. Detta möjliggör säker hantering av servern via terminalen, där både inloggningsuppgifter och data skyddas från avlyssning på nätverket.
+
+3. Vad händer om en kritisk tjänst stängs av?
+Om en kritisk tjänst (exempelvis NetworkManager eller systemets init-process) stängs av, kan servern tappa kontakten med nätverket, frysa eller bli helt omöjlig att logga in på.
+
+För att ta reda på vilka tjänster som är kritiska kan man använda kommandot systemctl list-dependencies för att se vilka andra processer som är beroende av en specifik tjänst, eller kontrollera multi-user.target för att se vilka tjänster som krävs för att systemet ska nå sitt normala driftläge.
+
 
 # Del 4 — Windows Server och Active Directory
 # Del 5 — Kontohantering med script
