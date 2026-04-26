@@ -90,7 +90,30 @@ När installationen var klar genomfördes följande steg för att förbereda ser
 
 ![IP-konfiguration och signatur](screenshots/srv-linux01-ipconfig.png)
 
-*Bilden verifierar att servern har korrekt hostname (srv-linux01) och en aktiv IP-adress i 192.168-serien, tillsammans med körningen av signaturskriptet.*
+*Bilden verifierar att servern har korrekt hostname (srv-linux01) och en aktiv IP-adress i 192.168-serien som är staisk, tillsammans med körningen av signaturskriptet.*
+
+### Del 3.3 — Verifiering av installationen (srv-linux01)
+
+Efter slutförd installation genomfördes en kontroll av systemet för att säkerställa att konfigurationen stämmer överens med de tekniska kraven.
+
+- **lsblk**: Utskriften visar den fysiska uppdelningen av hårddisken och bekräftar att partitionerna för root, home och swap har skapats korrekt på den underliggande lagringsenheten.
+- **df -h**: Detta verifierar att filsystemen är monterade med rätt storlekar, där vi ser att `/` (20 GiB) och `/home` (10 GiB) har den lagringskapacitet som krävs för kommunens miljö.
+- **ip addr show**: Genom detta kommando bekräftas att nätverkskortet `ens160` har den statiska IP-adressen 192.168.183.135, vilket är nödvändigt för serverns tillgänglighet i nätverket.
+- **hostnamectl**: Detta bekräftar att serverns unika identitet har satts till `srv-linux01` och ger en överblick av systemets kernelversion och arkitektur.
+- **cat /etc/os-release**: Innehållet i denna fil bevisar att servern kör den korrekta versionen av Red Hat Enterprise Linux 9, vilket garanterar en stabil och supportad plattform.
+### Del 3.3 — Verifiera installationen (srv-linux01)
+
+Här verifieras systemets konfiguration genom en serie kommandon. Varje utskrift bekräftar att installationen har utförts enligt kommunens kravspecifikation.
+
+#### Skärmdump 3: Blockenheter
+- **lsblk**: Utskriften visar systemets lagringsstruktur i en trädvy och bekräftar att den fysiska hårddisken har delats upp korrekt i de planerade partitionerna för root (/), home (/home) och swap.
+
+![Blockenheter](screenshots/screenshot-03.png)
+
+#### Del 3.3.2 — Skärmdump #4 (df -h)
+- **df -h**: Utskriften från detta kommando verifierar att filsystemen har monterats på rätt sätt och bekräftar att partitionerna för `/` (20 GiB) och `/home` (10 GiB) har den lagringskapacitet som krävs för kommunens servermiljö.
+
+![Filsystemsanvändning](screenshots/screenshot-04.png)
 
 # Del 4 — Windows Server och Active Directory
 # Del 5 — Kontohantering med script
