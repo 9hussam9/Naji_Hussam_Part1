@@ -1,0 +1,7 @@
+Write-Host "======================================================================"
+Write-Host "Name:         [Hussam Naji]"
+Write-Host "Email:        [mhdall990103a@student.jenseneducation.se]"
+Write-Host "Timestamp:    $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+Write-Host "Hostname:     $env:COMPUTERNAME"
+Write-Host "IP:           $((Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -notlike '*Loopback*' }).IPAddress | Select-Object -First 1)"
+Write-Host "======================================================================"
