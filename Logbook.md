@@ -142,6 +142,17 @@ Om en kritisk tjänst (exempelvis NetworkManager eller systemets init-process) s
 
 För att ta reda på vilka tjänster som är kritiska kan man använda kommandot systemctl list-dependencies för att se vilka andra processer som är beroende av en specifik tjänst, eller kontrollera multi-user.target för att se vilka tjänster som krävs för att systemet ska nå sitt normala driftläge.
 
+#### Del 3.5.1 — Skärmdump #7 (Signaturverifiering)
+Här verifieras att signaturskriptet fungerar korrekt på srv-linux01. Detta skript är obligatoriskt för all framtida dokumentation för att säkerställa spårbarhet och äkthet i kommunens servermiljö.
+
+![Signaturverifiering](screenshots/screenshot-07.png)
+
+#### Del 3.6.1 — Skärmdump #8 (Felsökning)
+Nedan visas dokumentationen av felsökningsprocessen rörande partitioneringen av srv-linux01, där ett tekniskt hinder löstes genom analys av UEFI-krav och automatisk partitionering som bas.
+
+![Felsökningsmoment](screenshots/screenshot-08.png)
+![part1-linux01-done.](screenshots/part1-linux01-done.png)
+
 
 # Del 4 — Windows Server och Active Directory
 # Del 5 — Kontohantering med script
