@@ -192,6 +192,21 @@ Jag har påbörjat konfigurationen av den nya domänen genom att välja "Add a n
 4. Vad är DNS och varför är det viktigt för AD?
 * DNS översätter datornamn till IP-adresser. Utan DNS kan inte Active Directory hitta sina egna tjänster eller domänkontrollanter, och nätverket slutar fungera.
 
+### Del 4.4 — Skapa användare och grupper
+**Vad jag gjorde:**
+Jag har skapat den organisationsstruktur för IT-avdelningen som krävdes i uppgiften. Jag skapade en huvud-OU kallad "IT-Department" och underliggande enheter för Technicians, Support och Management.
+
+- **Skärmdump #14**: Visar den färdiga OU-strukturen i Active Directory tillsammans med signaturskriptet.
+![OU struktur IT-Department](screenshots/screenshot-13.png)
+
+### Del 4.6 — Skapa säkerhetsgrupper
+**Vad jag gjorde:**
+För att kunna hantera rättigheter effektivt har jag skapat globala säkerhetsgrupper i respektive OU. Jag skapade grupperna G_IT_Technicians, G_IT_Support och G_IT_Management.
+
+- **Skärmdump #14**: Visar de nyskapade grupperna i Active Directory tillsammans med signaturskriptet.
+![Säkerhetsgrupper i AD](screenshots/screenshot-14.png)
+
+
 
 
 # Del 5 — Kontohantering med script
