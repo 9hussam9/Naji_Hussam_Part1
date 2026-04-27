@@ -215,7 +215,7 @@ Jag konfigurerade gränssnittet ens160 med en statisk IP-adress via nmcli. Jag p
   - Gateway: 192.168.183.2
   - DNS: 192.168.183.10
 - **Skärmdump #14**: Visar lyckad nätverksverifiering (ping) mot både srv-dc01 och srv-linux01.
-![Verifiering srv-idm01](screenshots/screenshot-14.png)
+![Verifiering srv-idm01](screenshots/screenshot-15.png)
 
 
 
