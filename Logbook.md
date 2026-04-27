@@ -153,8 +153,47 @@ Nedan visas dokumentationen av felsökningsprocessen rörande partitioneringen a
 ![Felsökningsmoment](screenshots/screenshot-08.png)
 ![part1-linux01-done.](screenshots/part1-linux01-done.png)
 
+## Del 4 — Windows Server och Active Directory
 
-# Del 4 — Windows Server och Active Directory
+### Del 4.1 — Installera srv-dc01
+Jag har installerat srv-dc01 med Windows Server (Desktop Experience) och konfigurerat hostname samt en statisk IP-adress i samma subnät som linux-servern.
+
+#### Skärmdump #9: Nätverksverifiering (Linux till Windows)
+- **Beskrivning:** Här visas resultatet av ett ping-test från srv-linux01 till srv-dc01 tillsammans med signaturskriptet för att verifiera nätverkskontakten.
+![Ping Linux till Windows](screenshots/screenshot-09.png)
+#### Skärmdump #10: Nätverksverifiering (Windows till Linux)
+- **Beskrivning:** För att säkerställa tvåvägskommunikation utförde jag ett ping-test från srv-dc01 till srv-linux01 (192.168.183.135).
+- **Resultat:** Testet lyckades, vilket visar att Windows-servern kan skicka och ta emot paket från Linux-miljön.
+![Ping Windows till Linux](screenshots/screenshot-10.png)
+#### Del 4.2 — Aktivera signaturskriptet på srv-dc01
+**Vad jag gjorde:**
+Jag har skapat och aktiverat signaturskriptet på srv-dc01.
+
+- **Skärmdump #11**: Visar att signaturskriptet körs korrekt på srv-dc01.
+![Signatur på srv-dc01](screenshots/screenshot-11.png)
+
+#### Del 4.3.1 — Konfiguration av ny skog (Forest)
+**Vad jag gjorde:**
+Jag har påbörjat konfigurationen av den nya domänen genom att välja "Add a new forest". Jag angav domännamnet bjorklunda.local .
+
+- **Skärmdump #13**: Visar konfigurationen av den nya skogen bjorklunda.local tillsammans med signaturskriptet.
+![Konfiguration av bjorklunda.local](screenshots/screenshot-12.png)
+
+### Del 4.3.2 — Svara på frågor
+1. Vad är Active Directory (AD) och varför används det?
+* Det är en central databas som samlar alla användare och datorer på ett ställe. Det används för att slippa hantera varje dator separat och för att enkelt styra behörigheter i hela kommunen.
+
+2. Vad är en domänkontrollant (DC)?
+* Det är den server som kör Active Directory. Den fungerar som nätverkets "dörrvakt" som kontrollerar att rätt person loggar in och har rätt åtkomst.
+
+3. Vad är skillnaden mellan en "skog" (forest) och en "domän" (domain)?
+* En domän är en specifik grupp (t.ex. bjorklunda.local). En skog är den högsta nivån som kan innehålla flera olika domäner under samma tak.
+
+4. Vad är DNS och varför är det viktigt för AD?
+* DNS översätter datornamn till IP-adresser. Utan DNS kan inte Active Directory hitta sina egna tjänster eller domänkontrollanter, och nätverket slutar fungera.
+
+
+
 # Del 5 — Kontohantering med script
 # Del 6 — Delade mappar och rättigheter
 # Del 7 — Utskriftssystem
