@@ -206,6 +206,18 @@ För att kunna hantera rättigheter effektivt har jag skapat globala säkerhetsg
 - **Skärmdump #14**: Visar de nyskapade grupperna i Active Directory tillsammans med signaturskriptet.
 ![Säkerhetsgrupper i AD](screenshots/screenshot-14.png)
 
+#### Del 4.6.1 — Nätverkskonfiguration på srv-idm01
+**Vad jag gjorde:**
+Jag konfigurerade gränssnittet ens160 med en statisk IP-adress via nmcli. Jag pekade även ut srv-dc01 (192.168.183.10) som DNS-server för att möjliggöra framtida domänintegration.
+
+- **Konfiguration:**
+  - IP: 192.168.183.20/24
+  - Gateway: 192.168.183.2
+  - DNS: 192.168.183.10
+- **Skärmdump #14**: Visar lyckad nätverksverifiering (ping) mot både srv-dc01 och srv-linux01.
+![Verifiering srv-idm01](screenshots/screenshot-14.png)
+
+
 
 
 
