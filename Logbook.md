@@ -31,6 +31,7 @@
 
 ## Del 1: Förberedelse och sätta upp repo
 Mappstrukturen har skapats och Git är initierat. Signaturskripten är placerade i `/scripts` och fungerar korrekt för att verifiera identitet och tidsstämpel vid skärmdumpar.
+_________________________________________________________________
 
 ## Del 2: Planering
 
@@ -60,6 +61,7 @@ Följande plan gäller för `srv-linux01` och `srv-idm01`:
 | / (root) | 20 GB | xfs | Standardstorlek för operativsystem och applikationer. |
 | /home | 10 GB | xfs | För att separera användardata från systemfiler. |
 | swap | 2 GB | swap | För att hantera minnesallokering vid behov.
+___________________________________________________________________________
 
 # Del 3 — Linux-serverinstallation
 
@@ -152,6 +154,8 @@ Nedan visas dokumentationen av felsökningsprocessen rörande partitioneringen a
 
 ![Felsökningsmoment](screenshots/screenshot-08.png)
 ![part1-linux01-done.](screenshots/part1-linux01-done.png)
+
+_____________________________________________________________________________________
 
 ## Del 4 — Windows Server och Active Directory
 
@@ -247,6 +251,50 @@ Active Directory (srv-dc01) är huvudkällan för Windows-användare, medan IdM 
 * pki-tomcatd (CA): Skapar och hanterar digitala certifikat.
 
 * ipa-custodia/ipa-otpd: Hanterar säkerhetsnycklar och engångslösenord.
+
+### Del 4.8 — IdM Autentisering och Grupphantering
+
+**Vad jag har gjort:**
+Jag har autentiserat mig som administratör i IdM med hjälp av `kinit admin` och verifierat den aktiva Kerberos-biljetten med `klist`. Därefter skapade jag de fem säkerhetsgrupper som krävs för IT-avdelningen i Björklunda kommun.
+
+- **Status:** Alla 5 grupper är aktiva och synliga i katalogen.
+- **Skärmdump #17:** Visar en giltig Kerberos TGT-biljett.
+![Kerberos biljett](screenshots/screenshot-17.png)
+
+- **Skärmdump #18:** Visar att alla säkerhetsgrupper har skapats framgångsrikt.
+![IdM grupper](screenshots/screenshot-18.png)
+
+### Del 4.9 — Anslut srv-linux01 till IdM
+
+**Vad jag har gjort:**
+Jag har installerat `ipa-client` på `srv-linux01` och anslutit den till domänen `bjorklunda.local`. Efter att ha åtgärdat ett tidigare fel gällande autentiserings-principalen (admin), slutfördes konfigurationen och SSH samt SSSD-tjänsterna uppdaterades för att tillåta domäninloggning.
+
+- **Status:** Klienten är nu fullständigt integrerad i IdM-miljön.
+- **Verifiering:** `id admin` bekräftar att användardata hämtas centralt från `srv-idm01`.
+- **Skärmdump #19:** Visar lyckad klientinstallation och verifiering.
+![Linux klient](screenshots/screenshot-19.png)
+
+### Del 4.9.2: Svara på frågor
+
+1. Innebörd av anslutningen?
+* Servern är nu en del av en centraliserad domän. Den litar på IdM-servern för autentisering av användare och rättigheter istället för att bara använda lokala filer.
+
+2. Lokal inloggning vs. IdM-konto?
+* Lokala konton är låsta till en maskin. IdM-konton är centrala och möjliggör Single Sign-On (SSO) över hela nätverket.
+
+3. Om srv-idm01 går ner?
+* Användare kan fortfarande logga in tack vare SSSD-caching, som sparar inloggningsuppgifter lokalt på klienten.
+
+## 💾 Systemåterställning & Milstolpar (Snapshots)
+
+För att säkra miljön inför nästa fas har systemet "frysts" i sitt nuvarande fungerande skick. 
+
+| Maskin       | Snapshot-namn       | Syfte                                   |
+| :----------- | :------------------ | :-------------------------------------- |
+| **srv-idm01**| `part1-idm01-done`  | Säkrar IdM-installation & konfiguration |
+| **srv-dc01** | `part1-dc01-done`   | Säkrar DNS & nätverksintegration        |
+__________________________________________________________________________________________________________________________________
+
 
 
 
