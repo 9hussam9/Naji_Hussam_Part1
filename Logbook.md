@@ -217,6 +217,40 @@ Jag konfigurerade gränssnittet ens160 med en statisk IP-adress via nmcli. Jag p
 - **Skärmdump #14**: Visar lyckad nätverksverifiering (ping) mot både srv-dc01 och srv-linux01.
 ![Verifiering srv-idm01](screenshots/screenshot-15.png)
 
+### Del 4.7.1 — Installation och Verifiering av RHEL IdM
+**Vad jag gjorde:**
+Jag har installerat ipa-server på srv-idm01 (RHEL 10). På grund av att RHEL 10 är en ny version hanterade jag GPG-nycklar manuellt och konfigurerade brandväggen genom att öppna de specifika portarna för Kerberos, LDAP och HTTP manuellt då den fördefinierade tjänsteprofilen saknades.
+
+- **Status:** Verifierat att alla tjänster körs med `ipactl status`.
+- **Nätverk:** Brandväggen är öppen för portarna 80, 443, 389, 636, 88, 464, 53 och 123.
+- **Skärmdump #15**: Visar lyckad status för IdM-tjänsterna och signaturskriptet.
+![IdM Verifiering](screenshots/screenshot-16.png)
+
+### Del 4.7.2: Svara på frågor
+
+1. Vad är RHEL IdM och vad används det till?
+Det är en centraliserad lösning (baserad på FreeIPA) för att hantera användare, autentisering och rättigheter i Linux-miljöer. Det används för att ge Single Sign-On (SSO) och samlad kontroll över certifikat och åtkomstregler.
+
+2. Vad är skillnaden mellan RHEL IdM och Active Directory i din miljö?
+Active Directory (srv-dc01) är huvudkällan för Windows-användare, medan IdM (srv-idm01) sköter Linux-specifika funktioner som sudo-regler och SSH-nycklar. Genom att ha båda kan vi skapa en "Trust" så att Linux-servrar litar på Windows-användare.
+
+3. Vilka tjänster startar IdM automatiskt? Vad gör de?
+
+* Directory Service (LDAP): Databasen för alla användare och policyer.
+
+* krb5kdc (Kerberos): Sköter säker inloggning och utfärdar "tickets".
+
+* kadmin: Används för att administrera Kerberos-konton.
+
+* httpd (Apache): Kör det webbaserade administrationsgränssnittet.
+
+* pki-tomcatd (CA): Skapar och hanterar digitala certifikat.
+
+* ipa-custodia/ipa-otpd: Hanterar säkerhetsnycklar och engångslösenord.
+
+
+
+
 
 
 
