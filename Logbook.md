@@ -295,15 +295,72 @@ För att säkra miljön inför nästa fas har systemet "frysts" i sitt nuvarande
 | **srv-dc01** | `part1-dc01-done`   | Säkrar DNS & nätverksintegration        |
 __________________________________________________________________________________________________________________________________
 
-
-
-
-
-
-
-
-
 # Del 5 — Kontohantering med script
+
+I den här delen har jag automatiserat skapandet av användarkonton i både Active Directory och RHEL IdM med hjälp av script. Syftet är att använda en central källa för att säkerställa att användardata är identisk i båda systemen.
+
+---
+
+### 5.1: Skapa CSV-filen
+Jag skapade filen `data/users.csv` på min lokala dator med information om minst 10 fiktiva medarbetare. 
+*   **Struktur**: Filen innehåller kolumnerna FirstName, LastName, Username, Department, ADGroup och IdMGroup.
+*   **Kodning**: Filen är sparad med UTF-8-kodning för att hantera svenska tecken korrekt.
+
+---
+
+### 5.2: Automatisering i Active Directory (srv-dc01)
+
+#### 5.2.1: Förklaring av PowerShell-scriptet
+Här följer en teknisk förklaring av hur mitt PowerShell-script fungerar:
+
+1.  **Dataladdning**: Scriptet använder kommandot `Import-Csv` för att läsa in CSV-filen och omvandla varje rad till ett objekt som PowerShell kan manipulera.
+2.  **Loop-logik**: Genom en `foreach`-loop körs samma kodblock för varje unik användare i listan, vilket möjliggör effektiv hantering av stora mängder data.
+3.  **Grupphantering**: Scriptet kontrollerar om säkerhetsgruppen finns; om den saknas skapas den först för att förhindra fel vid grupptilldelning.
+4.  **Säkerhet**: `ConvertTo-SecureString` används för att hantera lösenordet säkert, vilket är ett krav för att AD-kontot ska kunna aktiveras direkt.
+5.  **Objektskapande**: Med `New-ADUser` mappar scriptet informationen från CSV-filen till rätt fält i Active Directory.
+6.  **Medlemskap**: Slutligen läggs användaren till i sin grupp med `Add-ADGroupMember`.
+
+#### 5.2.2 & 5.2.3: Resultat och Verifiering
+![Resultat PowerShell srv-dc01](screenshots/screenshot-20.png)
+![Verifiering AD Users and Computers](screenshots/screenshot-21.png)
+
+---
+
+### 5.3: Automatisering i RHEL IdM (srv-idm01)
+
+#### 5.3.1: Förklaring av Bash-scriptet
+Här förklarar jag logiken i mitt Linux-script:
+
+1.  **Filbehandling**: Scriptet använder `sed 1d` för att läsa CSV-filen men ignorera rubrikraden så att endast användardata bearbetas.
+2.  **Dataseparering**: En `while`-loop kombineras med `IFS=','` för att dela upp varje rad vid kommatecknen och tilldela informationen till variabler.
+3.  **IPA-integration**: Scriptet använder `ipa user-add` för att skapa kontot. Parametern `--orgunit` användes för att mappa avdelningsnamnet korrekt.
+4.  **Lösenordsautomatisering**: För att slippa manuell inmatning skickas (pipas) lösenordet direkt till kommandot `ipa passwd`.
+5.  **Grupptilldelning**: Användaren läggs till i sin Linux-grupp via `ipa group-add-member` för att få rätt behörigheter direkt.
+
+#### 5.3.2 & 5.3.3: Resultat och Verifiering
+![Resultat Bash srv-idm01](screenshots/screenshot-22.png)
+![Verifiering IdM Web UI](screenshots/screenshot-23.png)
+
+---
+
+### 5.4: Reflektion och frågor
+
+**Fråga 1: Vilka är fördelarna med att använda ett script istället för att skapa användare manuellt?**
+*Svar*: Det är betydligt snabbare och eliminerar risken för mänskliga fel. Genom att automatisera processen säkerställer man att alla användare får exakt samma inställningar och att inga stavfel uppstår, vilket ökar säkerheten och spårbarheten i systemet.
+
+**Fråga 2: Hur säkerställer scripten att samma användarnamn används i båda systemen?**
+*Svar*: Det säkerställs genom att båda scripten använder samma CSV-fil som sin enda källa. Eftersom både PowerShell-scriptet och Bash-scriptet läser från samma kolumn i samma fil, blir resultatet identiskt i både Windows och Linux.
+
+**Fråga 3: Vad händer om man kör scriptet igen när användarna redan finns?**
+*Svar*: Både Active Directory och IdM kommer att generera felmeddelanden som anger att objektet redan existerar. Scriptet kommer dock att fortsätta till nästa rad i listan. För att optimera detta kan man lägga till logik som först kontrollerar om användaren finns innan skapandet påbörjas.
+
+
+
+
+
+
+
+
 # Del 6 — Delade mappar och rättigheter
 # Del 7 — Utskriftssystem
 # Del 8 — Virtualisering
