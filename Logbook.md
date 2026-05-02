@@ -355,13 +355,57 @@ Här förklarar jag logiken i mitt Linux-script:
 *Svar*: Både Active Directory och IdM kommer att generera felmeddelanden som anger att objektet redan existerar. Scriptet kommer dock att fortsätta till nästa rad i listan. För att optimera detta kan man lägga till logik som först kontrollerar om användaren finns innan skapandet påbörjas.
 
 
+## Del 6: Delade mappar och rättigheter
+
+I denna del har jag konfigurerat lagringsyta på både Linux och Windows för att styra åtkomst baserat på grupptillhörighet.
+
+### 6.1: Delade mappar på srv-linux01
+Jag skapade mapparna `/shares/it-common` och `/shares/it-admin` och satte rättigheter med `chmod` och `chown`.
+
+*   **it-common (750)**: Ägaren (root) har full åtkomst, gruppen `readonly-access` kan läsa/lista, och övriga har ingen åtkomst.
+*   **it-admin (770)**: Både ägaren och gruppen `full-access` har full åtkomst.
+
+![Rättigheter på srv-linux01](screenshots/screenshot-24.png)
+
+**6.1.2: Vad betyder siffrorna i chmod?**
+Siffrorna representerar rättigheter för Ägare, Grupp och Övriga. 7 motsvarar fulla rättigheter (läsa, skriva, köra), 5 motsvarar läsa och köra, medan 0 innebär noll åtkomst. 750 innebär alltså att gruppen kan läsa men inte skriva, medan 770 ger gruppen full kontroll.
+
+---
+
+### 6.2: Delade mappar på srv-dc01
+Jag skapade motsvarande mappar på Windows-servern och konfigurerade NTFS-rättigheter.
+
+**6.2.1: Borttagna standardbehörigheter**
+Jag inaktiverade arv (inheritance) och valde "**Remove all inherited permissions from this object**". Jag tog specifikt bort gruppen **Users (BJORKLUNDA\Users)** samt **CREATOR OWNER**.
+*   **Varför?** För att säkerställa att endast medlemmar i våra specifika IT-grupper har åtkomst. Om "Users" ligger kvar har alla domänanvändare läsrättighet som standard, vilket bryter mot säkerhetspolicyn om "minsta möjliga behörighet".
+
+![NTFS it-common](screenshots/screenshot-25.png)
+![NTFS it-admin](screenshots/screenshot-26.png)
+
+---
+
+### 6.4: Testa åtkomst
+Jag verifierade rättigheterna genom att ansluta från **srv-linux01** (GUI) till **srv-dc01** via SMB med IP-adressen `192.168.183.10`. Testerna utfördes med användaren **Yuki Tanaka (ytanaka)** som tillhör gruppen `GRP_ReadOnly`.
+
+*   **Test 1 (it-common)**: Åtkomst lyckades. Yuki kunde lista och läsa filer, vilket bekräftar att läsrättigheterna fungerar.
+![Lyckad åtkomst](screenshots/screenshot-27.png)
+
+*   **Test 2 (it-admin)**: Åtkomst nekades, vilket bevisar att användare utanför administratörsgruppen inte kan nå känslig data.
+![Nekad åtkomst](screenshots/screenshot-28.png)
+
+**6.4.3: Frågor och svar**
+1.  **Vad är skillnaden mellan NTFS-rättigheter och delningsrättigheter?**
+    *   NTFS-rättigheter styr säkerheten lokalt på filsystemet och gäller oavsett hur man når filen, medan delningsrättigheter (Share Permissions) endast styr åtkomst när man ansluter över nätverket via SMB.
+2.  **Vilka rättigheter gäller när en användare ansluter via nätverket?**
+    *   Det är alltid den **mest restriktiva** rättigheten av de två som blir den effektiva behörigheten för användaren.
+3.  **Vad är skillnaden mellan hur Linux och Windows hanterar gruppbaserade rättigheter?**
+    *   Linux (standard UGO-modell) använder en enkel modell med en ägare och en grupp per objekt. Windows använder ACL:er (Access Control Lists) som tillåter att man lägger till ett obegränsat antal olika grupper och användare med unika rättigheter på samma mapp.
+
+    
 
 
 
 
-
-
-# Del 6 — Delade mappar och rättigheter
 # Del 7 — Utskriftssystem
 # Del 8 — Virtualisering
 # Del 9 — Lagar och säkerhet
