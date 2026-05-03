@@ -401,12 +401,67 @@ Jag verifierade rättigheterna genom att ansluta från **srv-linux01** (GUI) til
 3.  **Vad är skillnaden mellan hur Linux och Windows hanterar gruppbaserade rättigheter?**
     *   Linux (standard UGO-modell) använder en enkel modell med en ägare och en grupp per objekt. Windows använder ACL:er (Access Control Lists) som tillåter att man lägger till ett obegränsat antal olika grupper och användare med unika rättigheter på samma mapp.
 
-    
+
+## Del 7: Utskriftssystem
+
+I den här delen har jag satt upp CUPS (Common Unix Printing System) på srv-linux01 .
+
+### 7.1: Installera och starta CUPS
+Jag installerade CUPS och konfigurerade tjänsten för att starta automatiskt vid omstart.
+
+*   **Installation**: `sudo dnf install cups`
+*   **Aktivering**: `sudo systemctl enable --now cups`
+
+![CUPS status](screenshots/screenshot-29.png)
+
+---
+
+### 7.2: Konfigurera CUPS för nätverksåtkomst
+För att administratörer ska kunna nå webbgränssnittet från nätverket redigerade jag `/etc/cups/cupsd.conf`.
+
+*   **Ändring**: Jag ändrade `Listen` för att lyssna på serverns IP och uppdaterade `<Location /admin>` med `Allow 192.168.183.0/24`.
+*   **Verifiering**: Jag kontrollerade att tjänsten lyssnar på rätt port med `sudo ss -tlnp | grep cups`.
+
+![CUPS nätverkskonfiguration](screenshots/screenshot-30.png)
+
+---
+
+### 7.3: Lägg till en virtuell skrivare
+Då labbmiljön saknar fysiska skrivare skapade jag en virtuell skrivare som pekar på `/dev/null`.
+
+*   **Kommando**: `sudo lpadmin -p IT-Printer -v file:///dev/null -m drv:///sample.drv/generic.ppd`
+*   **Standard**: Jag satte skrivaren som systemets standard med `sudo lpadmin -d IT-Printer`.
+
+![Virtuell skrivare tillagd](screenshots/screenshot-31.png)
+
+---
+
+### 7.4: Testa utskrift
+Jag skickade ett testjobb för att verifiera att utskriftshanteringen fungerar korrekt.
+
+*   **Utskrift**: `echo "Test print from srv-linux01" | lp -d IT-Printer`
+*   **Kontroll**: Jag kontrollerade att jobbet slutfördes genom att titta i historiken över klara jobb.
+
+![Utskriftstest och kö](screenshots/screenshot-32.png)
+
+---
+
+### 7.4.2: Svara på frågorna
+
+**Vad är CUPS och varför används det i Linux-miljöer?**
+CUPS (Common Unix Printing System) är det vanligaste utskriftssystemet i Linux. Det används för att hantera skrivare, drivrutiner och utskriftsjobb centralt, vilket gör det möjligt för en server att agera som en hubb för hela nätverkets utskrifter.
+
+**Vad är skillnaden mellan en lokal skrivare och en nätverksskrivare i CUPS?**
+En lokal skrivare är fysiskt ansluten till servern (t.ex. USB) eller virtuellt mappad (som vår fil-URI), medan en nätverksskrivare nås via ett nätverksprotokoll (som IPP eller SMB) från en annan nätverksenhet.
+
+**Hur skulle du styra vem som får skriva ut med hjälp av IdM-grupper i en produktionsmiljö?**
+I en produktionsmiljö konfigureras CUPS för att autentisera mot IdM-systemet. Genom att använda direktivet `Require user @gruppnamn` i konfigurationsfilen kan man begränsa utskriftsrättigheter till specifika säkerhetsgrupper i IdM.
 
 
 
 
-# Del 7 — Utskriftssystem
+
+
 # Del 8 — Virtualisering
 # Del 9 — Lagar och säkerhet
 # Del 10 — Råd och stöd
