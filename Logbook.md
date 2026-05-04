@@ -31,7 +31,7 @@
 
 ## Del 1: Förberedelse och sätta upp repo
 Mappstrukturen har skapats och Git är initierat. Signaturskripten är placerade i `/scripts` och fungerar korrekt för att verifiera identitet och tidsstämpel vid skärmdumpar.
-_________________________________________________________________
+______________________________________________________________________________________________________________________________________________________________________________
 
 ## Del 2: Planering
 
@@ -61,8 +61,7 @@ Följande plan gäller för `srv-linux01` och `srv-idm01`:
 | / (root) | 20 GB | xfs | Standardstorlek för operativsystem och applikationer. |
 | /home | 10 GB | xfs | För att separera användardata från systemfiler. |
 | swap | 2 GB | swap | För att hantera minnesallokering vid behov.
-___________________________________________________________________________
-
+___________________________________________________________________________________________________________________________________________________________________________________________________________
 # Del 3 — Linux-serverinstallation
 
 ### Installation av operativsystem
@@ -155,7 +154,7 @@ Nedan visas dokumentationen av felsökningsprocessen rörande partitioneringen a
 ![Felsökningsmoment](screenshots/screenshot-08.png)
 ![part1-linux01-done.](screenshots/part1-linux01-done.png)
 
-_____________________________________________________________________________________
+_________________________________________________________________________________________________________________________________________________________________________________________________________
 
 ## Del 4 — Windows Server och Active Directory
 
@@ -293,7 +292,7 @@ För att säkra miljön inför nästa fas har systemet "frysts" i sitt nuvarande
 | :----------- | :------------------ | :-------------------------------------- |
 | **srv-idm01**| `part1-idm01-done`  | Säkrar IdM-installation & konfiguration |
 | **srv-dc01** | `part1-dc01-done`   | Säkrar DNS & nätverksintegration        |
-__________________________________________________________________________________________________________________________________
+_________________________________________________________________________________________________________________________________________________________________________________________________________
 
 # Del 5 — Kontohantering med script
 
@@ -400,6 +399,7 @@ Jag verifierade rättigheterna genom att ansluta från **srv-linux01** (GUI) til
     *   Det är alltid den **mest restriktiva** rättigheten av de två som blir den effektiva behörigheten för användaren.
 3.  **Vad är skillnaden mellan hur Linux och Windows hanterar gruppbaserade rättigheter?**
     *   Linux (standard UGO-modell) använder en enkel modell med en ägare och en grupp per objekt. Windows använder ACL:er (Access Control Lists) som tillåter att man lägger till ett obegränsat antal olika grupper och användare med unika rättigheter på samma mapp.
+    ________________________________________________________________________________________________________________________________________________________________________________________________________
 
 
 ## Del 7: Utskriftssystem
@@ -457,12 +457,55 @@ En lokal skrivare är fysiskt ansluten till servern (t.ex. USB) eller virtuellt 
 **Hur skulle du styra vem som får skriva ut med hjälp av IdM-grupper i en produktionsmiljö?**
 I en produktionsmiljö konfigureras CUPS för att autentisera mot IdM-systemet. Genom att använda direktivet `Require user @gruppnamn` i konfigurationsfilen kan man begränsa utskriftsrättigheter till specifika säkerhetsgrupper i IdM.
 
+___________________________________________________________________________________________________________________________________________________________________________________________________________
+
+## Del 8: Virtualisering
+
+I den här delen dokumenteras virtualiseringsmiljön och hanteringen av snapshots för att säkerställa systemets återställningsförmåga.
+
+### 8.1: Svara på frågorna
 
 
+1. Jag använder **VMware Workstation Pro** som virtualiseringsplattform. Det är en industriledande lösning som erbjuder stabil prestanda och avancerade nätverksfunktioner som är nödvändiga för att  simulera en komplex kommunal IT-miljö.
+
+2.    **Skillnad mellan Hypervisorer**: En Typ 1-hypervisor installeras direkt på hårdvaran (t.ex. VMware ESXi), medan en Typ 2-hypervisor körs som en applikation i ett värdoperativsystem som Windows.
+3.   **Min plattform**: VMware Workstation Pro är en **Typ 2-hypervisor**. Prestandamässigt innebär det en viss overhead då kommunikationen sker via värddatorns OS, men det är optimalt för utveckling och test.
+
+---
+
+### 8.2: Nätverkslägen i virtualisering
+
+| Nätverksläge  |               Vad det innebär                                                         |              När det används                                                             |
+| :------------ | :------------------------------------------------------------------------------------ |------------------------------------------------------------------------------------------- | 
+
+| **NAT**       | VM:en delar värddatorns IP-adress. Maskinen kan nå internet men är osynlig utifrån.| Används när man vill ha internet utan att konfigurera extra IP-adresser i det fysiska nätverket.
+
+| **Bridged**   | Den virtuella maskinen får en egen identitet och IP-adress direkt från det fysiska nätverkets router.| Används när VM:en ska agera som en riktig server som ska vara nåbar för andra enheter i nätverket.
+
+| **Host-only** | Skapar ett helt isolerat internt nätverk som endast delas mellan värddatorn och de virtuella maskinerna.| Används för säkra testmiljöer där man vill isolera trafiken helt från internet och lokala nätverket.
+
+---
+
+### 8.3: Snapshots
+Jag har tagit snapshots för samtliga maskiner för att skapa en säker återställningspunkt efter slutförd konfiguration.
+
+![Snapshots srv-linux01](screenshots/screenshot-33.png)
+![Snapshots srv-idm01](screenshots/screenshot-34.png)
+![Snapshots srv-dc01](screenshots/screenshot-35.png)
+
+---
+
+### 8.4: Återställningstest
+För att verifiera att backup-strategin fungerar utförde jag ett återställningstest på srv-linux01.
+
+*   **Genomförande**: Jag skapade en temporär testfil och utförde sedan en återställning till min senaste snapshot.
+*   **Resultat**: Efter återställningen var filen borta, vilket bekräftar att systemet återgått till exakt det tillstånd som sparats.
+*   **Reflektion**: Snapshots är utmärkta vid konfigurationsändringar, men ersätter inte långsiktig backup av rörlig data då de kan påverka prestandan över tid.
+
+![Återställning verifierad](screenshots/screenshot-36.png)
+___________________________________________________________________________________________________________________________________________________________________________________________________________
 
 
-
-# Del 8 — Virtualisering
 # Del 9 — Lagar och säkerhet
 # Del 10 — Råd och stöd
 # Del 11 — Reflektera över din miljö
