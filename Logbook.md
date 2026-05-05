@@ -506,6 +506,78 @@ För att verifiera att backup-strategin fungerar utförde jag ett återställnin
 ___________________________________________________________________________________________________________________________________________________________________________________________________________
 
 
-# Del 9 — Lagar och säkerhet
+## Del 9: Lagar och säkerhet
+
+I den här delen analyseras de juridiska och säkerhetsmässiga kraven som styr IT-miljön.
+
+### 9.1: GDPR
+
+### Del 9.1.1: Svara på frågorna
+1.   **Typ av personuppgifter**: I miljön hanteras namn, användarnamn, lösenord, grupptillhörigheter (vilket kan avslöja yrkesroll) samt unika identifierare som SID och UID.
+
+2.   **Lagring och åtkomst**: Uppgifterna lagras centralt i Active Directory (srv-dc01) och FreeIPA/IdM (srv-idm01). Endast behörig IT-personal med administrativa rättigheter har full åtkomst till dessa register.
+
+3.  **Exponering vid intrång**: Om en obehörig får åtkomst till AD eller IdM exponeras hela personalkatalogen. Detta kan leda till identitetsstöld, kartläggning av organisationen och möjligheten för angriparen att eskalera sina rättigheter i nätverket.
+
+
+---
+
+### 9.2: Upphovsrättslagen och licensvillkor
+
+## Del 9.2.1: Svara på frågorna
+
+1.   **Red Hat Developer-konto**: Enligt licensvillkoren på developers.redhat.com får kontot användas för individuellt bruk i syfte att utveckla, testa och lära sig systemet. Det får inte användas för kommersiell drift eller i en produktionsmiljö utan en betald prenumeration.
+
+2.   **Skillnad på licenser**: En **öppen källkodslicens** (t.ex. GPL) tillåter användare att se, ändra och dela koden fritt. En **proprietär licens** (t.ex. Microsofts) ägs helt av en leverantör som begränsar hur programmet får användas, ändras och distribueras.
+
+3.  **Programvaror i miljön**: 
+    *   **Öppen källkod**: RHEL (operativsystemet), CUPS, SSSD, Samba och FreeIPA.
+    *   **Proprietär**: Windows Server 2025 och VMware Workstation Pro.
+
+---
+
+### 9.3: Offentlighets- och sekretesslagen (OSL)
+
+## Del 9.3.1: Svara på frågorna
+1.   **Informationshantering**: Att Björklunda är en offentlig verksamhet innebär att alla handlingar som förvaras där som huvudregel är allmänna och kan begäras ut, såvida de inte skyddas av sekretess.
+
+2.   **IT-common**: I mappen `it-common` bör man inte lagra känsliga uppgifter såsom anteckningar om enskilda medarbetares hälsa, sekretessbelagda utredningar eller personnummer, eftersom mappen är tillgänglig för en bredare grupp.
+
+3.   **Påverkan på behörigheter**: OSL gör att jag måste tillämpa "principen om minsta möjliga behörighet". Jag sätter upp behörigheter så att sekretessbelagd information endast är åtkomlig för de som absolut behöver den i tjänsten, för att förhindra olovlig spridning av allmänna handlingar.
+
+
+---
+
+### 9.4: Säkerhetsanalys
+
+## Del 9.4.1: Svara på frågorna
+
+1.  **Risk**: Svaga eller återanvända lösenord för administrativa konton.
+    *   **Konsekvens**: En angripare kan utföra en "brute force"-attack och ta kontroll över hela domänen.
+    *   **Åtgärd**: Införa en strikt lösenordspolicy och krav på multifaktorautentisering (MFA).
+
+2.  **Risk**: Okrypterad trafik mellan servrar och klienter.
+    *   **Konsekvens**: Känslig data eller inloggningsuppgifter kan fångas upp via nätverket ("sniffing").
+    *   **Åtgärd**: Aktivera tvingande kryptering för LDAPS, SSH och SMB-trafik.
+
+3.  **Risk**: Bristfällig patchning av operativsystemen.
+    *   **Konsekvens**: Kända sårbarheter kan utnyttjas för att bryta sig in i servrarna.
+    *   **Åtgärd**: Schemalägga regelbundna uppdateringar via dnf/Windows Update och använda centraliserad hantering.
+
+---
+
+### 9.5: PhenixID och stark autentisering
+
+## Del 9.5.1: Svara på frågorna
+1.   **Stark autentisering**: Innebär att man använder minst två faktorer (MFA) för inloggning (t.ex. något man vet – lösenord, och något man har – en app/bricka). Det krävs i myndigheter för att lösenord ensamt är för lätta att stjäla eller gissa.
+
+2.   **Mervärde**: PhenixID tillför ett extra säkerhetslager genom multifaktorautentisering och Single Sign-On (SSO) som inte finns inbyggt som en färdig helhetslösning i standard-AD eller IdM.
+
+3.   **Single Sign-On (SSO)**: SSO innebär att medarbetaren bara behöver logga in en gång för att nå alla sina system. Fördelen är att det ökar produktiviteten och minskar risken att användare skriver ner sina lösenord på lappar för att de har för många att hålla reda på.
+
+___________________________________________________________________________________________________________________________________________________________________________________________________________
+
+
+
 # Del 10 — Råd och stöd
 # Del 11 — Reflektera över din miljö
