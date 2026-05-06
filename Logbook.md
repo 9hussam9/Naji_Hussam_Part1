@@ -578,6 +578,50 @@ I den här delen analyseras de juridiska och säkerhetsmässiga kraven som styr 
 ___________________________________________________________________________________________________________________________________________________________________________________________________________
 
 
+## Del 10: Råd och stöd
 
-# Del 10 — Råd och stöd
+### 10.1.1: Välkomstbrev till ny kollega
+
+Hej och varmt välkommen till IT-avdelningen på Björklunda kommun!
+
+Vi är jätteglada att ha dig här. För att du ska komma igång så smidigt som möjligt har vi samlat lite praktisk information om hur våra system fungerar:
+
+*   **Inloggning**: Ditt användarnamn är ditt förnamn följt av efternamn (t.ex. anna.andersson). Du använder samma lösenord för att logga in på din dator som du gör för att nå våra gemensamma system.
+
+*   **Gemensamma mappar**: Vi använder delade mappar för att lagra filer. Du hittar mappen "it-common" där vi sparar dokument som alla på avdelningen behöver nå. Det finns även en mapp som heter "it-admin" som är låst till dem med ett större administrativt ansvar. Tänk på att bara spara arbetsrelaterat material här.
+
+*   **Utskrifter**: När du behöver skriva ut väljer du skrivaren som heter "IT-Printer" i listan på din dator. Dina dokument skickas då till vår gemensamma utskriftstjänst.
+
+*   **Om du får problem**: Om du skulle råka glömma ditt lösenord eller om inloggningen krånglar, kontakta oss direkt via servicedisken eller titta förbi våra tekniker så hjälper vi dig att återställa det.
+
+*   **Säkerhet först**: För att hålla kommunens uppgifter säkra är det viktigt att du aldrig lånar ut ditt konto eller berättar ditt lösenord för någon annan, inte ens en kollega. Kom även ihåg att låsa datorn (Windows-tangenten + L) när du lämnar din plats.
+
+Hoppas du ska trivas hos oss!
+
+---
+
+### 10.1.2: Svar på supportfråga
+
+**Fråga:** *"Hej! Jag försöker öppna mappen IT-Admin men det står att jag inte har behörighet. Jag har jobbat här i tre år och har alltid kunnat öppna den. Vad har hänt?"*
+
+** Svar:**
+
+Hej!
+
+Tack för att du hör av dig till oss. Jag förstår att det skapar problem i arbetet när du plötsligt inte kommer in i mappen "IT-Admin" som du brukar använda.
+
+Det som troligen har hänt är att vi nyligen har uppdaterat säkerhetsinställningarna i systemet för att bättre följa de lagar vi arbetar under. Det kan ibland göra att kopplingen mellan ditt användarkonto och vissa mappar behöver förnyas eller att en inställning har fallit bort i uppdateringen.
+
+Jag kommer nu att titta närmare på ditt konto i vårt behörighetssystem för att se till att du ligger med i rätt grupp. Jag kommer även kontrollera att servern läser av dina rättigheter korrekt.
+
+Jag räknar med att ha undersökt detta och återkomma till dig med en lösning senast inom en timme. Under tiden kan du fortsätta arbeta i mappen "it-common" som vanligt.
+
+Med vänliga hälsningar,
+IT-teknikern
+
+_________________________________________________________________________________________________________________________________________________________________________________________________________
+
 # Del 11 — Reflektera över din miljö
+
+
+
