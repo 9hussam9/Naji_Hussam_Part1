@@ -621,7 +621,43 @@ IT-teknikern
 
 _________________________________________________________________________________________________________________________________________________________________________________________________________
 
-# Del 11 — Reflektera över din miljö
+
+## Del 11: Reflektera över din miljö
 
 
+### 11.1: Miljöplan
+Nedan visas diagrammet över den färdiga servermiljön, inklusive hostname, IP-adresser och kommunikationsvägar mellan systemen.
 
+![Färdig miljöplan](screenshots/environment-plan-final.png)
+
+
+### 11.1.1: Förklaring av miljön
+
+**Vad gör srv-linux01, srv-idm01 och srv-dc01? Varför behövs alla tre?**
+
+* **srv-linux01**: Fungerar som applikations- och filserver. Den hanterar de resurser användarna interagerar med, såsom delade mappar (Samba) och utskrifter (CUPS).
+
+* **srv-idm01**: Kör RHEL Identity Management (FreeIPA). Den hanterar identiteter, autentisering (Kerberos) och policyer specifikt för Linux-miljön.
+
+* **srv-dc01**: Är domänkontrollant för Windows-miljön (Active Directory). Den hanterar Windows-klienter och fungerar som den övergripande auktoriteten i domänen.
+
+* **Varför alla tre?**: Kombinationen behövs för att skapa en säker hybridmiljö. Genom att ha både AD och IdM kan vi styra både Windows- och Linux-världen med de verktyg som är bäst lämpade för 
+respektive plattform, samtidigt som de pratar med varandra.
+
+**Vad är skillnaden mellan RHEL IdM och Active Directory i din miljö?**
+Active Directory (AD) är optimerat för att hantera Windows-klienter och Group Policies (GPO). RHEL IdM (Identity Management) är däremot byggt för att hantera Linux-specifika funktioner som sudo-regler, HBAC (Host Based Access Control) och SSH-nycklar på ett sätt som AD inte kan göra infödd.
+
+**Vad skulle hända om srv-idm01 slutade fungera?**
+Om `srv-idm01` går ner skulle Linux-specifika tjänster drabbas hårt. Användare skulle inte kunna logga in på Linux-servrar (om de inte har cachade uppgifter), och sudo-regler skulle sluta fungera. Däremot skulle Windows-miljön och inloggning på `srv-dc01` fortsätta fungera som vanligt.
+
+**Vad skulle hända om srv-dc01 slutade fungera?**
+Då `srv-dc01` agerar som domänens hjärta skulle konsekvenserna bli stora. Windows-klienter skulle inte kunna logga in, DNS-uppslag för domänen `.local` skulle sannolikt fallera, och den "trust" som finns mellan Linux- och Windows-miljön skulle brytas, vilket gör att även vissa tjänster på Linux-sidan kan påverkas.
+
+**Vad är PhenixID:s roll i en produktionsmiljö? Varför räcker det inte med bara IdM och AD?**
+PhenixID tillför en helhetslösning för stark autentisering (MFA) och Single Sign-On (SSO). Medan AD och IdM hanterar själva identiteterna, ser PhenixID till att inloggningen sker säkert med fler än en faktor och att användaren bara behöver logga in en gång för att nå alla olika system i kommunen.
+
+**Vad skulle du göra annorlunda om du byggde miljön igen från början?**
+Om jag byggde om miljön skulle jag fokusera mer på automatisering. Istället för att konfigurera varje server manuellt skulle jag använda verktyg som Ansible för att kunna rulla ut inställningarna snabbare och mer konsekvent. Jag skulle även se över nätverkssegmenteringen ytterligare för att öka säkerheten mellan server- och klientsegmenten.
+
+________________________________________________________________________________________________________________________________________________________________________________________________________
+#                                               >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> THE END <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<                                    #
